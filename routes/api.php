@@ -1,5 +1,6 @@
 <?php
 
+use App\Character\Http\Api\Controllers\CharacterController;
 use App\Game\Http\Api\Controllers\GameController;
 use Illuminate\Support\Facades\Route;
 use App\User\Http\Api\Controllers\UserController;
@@ -31,6 +32,11 @@ Route::group(['as' => 'api.'], function () {
 
         Route::group(['prefix' => 'games', 'as' => 'game.'], function () {
             Route::post('/', [GameController::class, 'create'])->name('create');
+            Route::post('/{id}', [GameController::class, 'join'])->name('join');
+        });
+
+        Route::group(['prefix' => 'characters', 'as' => 'character.'], function () {
+            Route::get('/{id}', [CharacterController::class, 'show'])->name('show');
         });
     });
 });

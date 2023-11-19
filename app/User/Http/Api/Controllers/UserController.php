@@ -32,7 +32,7 @@ class UserController extends Controller
 
         } catch (Throwable) {
             return response([
-                'message' => 'Bad credential provided!',
+                'message' => 'Bad credentials provided!',
             ], 401);
         }
 

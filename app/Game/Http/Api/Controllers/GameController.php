@@ -17,7 +17,10 @@ class GameController extends Controller
      */
     public function create(CreateRequest $createRequest): JsonResponse
     {
-        $game = $this->gameService->create($createRequest->validated());
+        $game = $this->gameService->create(
+            $createRequest->validated(),
+            $createRequest->user()
+        );
 
         return response()->json([
             'data' => $game

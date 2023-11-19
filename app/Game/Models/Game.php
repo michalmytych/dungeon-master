@@ -7,14 +7,17 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 /**
+ * @property mixed $id
  * @property string $name
  * @property string $code
+ * @property mixed $master_id
  */
 class Game extends Model
 {
     use HasFactory;
 
     protected $fillable = [
+        'master_id',
         'name',
         'code'
     ];

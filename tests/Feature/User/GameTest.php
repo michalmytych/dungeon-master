@@ -19,6 +19,7 @@ class GameTest extends TestCase
             'name' => 'My new D&D game!',
         ];
 
+        /** @var User $user */
         $user = User::factory()->create();
 
         $response = $this
@@ -27,6 +28,7 @@ class GameTest extends TestCase
 
         $response->assertCreated();
 
+        /** @var Game $game */
         $game = Game::first();
 
         $this->assertNotNull($game);
@@ -38,6 +40,7 @@ class GameTest extends TestCase
                         ->where('id', $game->id)
                         ->where('name', $game->name)
                         ->where('code', $game->code)
+                        ->where('master_id', $user->id)
                         ->whereAllType([
                             'id' => 'integer',
                             'name' => 'string',
