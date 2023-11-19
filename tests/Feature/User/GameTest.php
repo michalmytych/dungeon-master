@@ -2,6 +2,9 @@
 
 namespace Tests\Feature\User;
 
+use App\Character\Models\Character;
+use App\Game\Events\UserJoinedGame;
+use Illuminate\Support\Facades\Event;
 use Tests\TestCase;
 use App\User\Models\User;
 use App\Game\Models\Game;
@@ -50,6 +53,63 @@ class GameTest extends TestCase
                         ])
                     )
             );
+    }
+
+    public function test_user_can_join_game(): void
+    {
+        $eventFake = Event::fake();
+
+        /** @var User $user */
+        $user = User::factory()->create();
+
+        /** @var Game $game */
+        $game = Game::factory()->create();
+
+        $response = $this
+            ->actingAs($user)
+            ->postJson(route('api.game.join', ['code' => $game->code]));
+
+        $response->assertOk();
+        $eventFake->assertDispatched(UserJoinedGame::class);
+
+        $game->refresh();
+
+        /** @var Character $character */
+        $character = Character::first();
+
+        $this->assertEquals($game->id, $character->game_id);
+        $this->assertEquals($user->id, $character->user_id);
+    }
+
+    public function test_user_cannot_join_game_with_bad_code(): void
+    {
+        /** @var User $user */
+        $user = User::factory()->create();
+
+        Game::factory()->create(['code' => 'ABC']);
+
+        $this
+            ->actingAs($user)
+            ->postJson(route('api.game.join', ['code' => 'DEF']))
+            ->assertNotFound();
+    }
+
+    public function test_user_cannot_join_game_if_already_joined(): void
+    {
+        /** @var User $user */
+        $user = User::factory()->create();
+
+        /** @var Game $game */
+        $game = Game::factory()->create();
+
+        $this
+            ->actingAs($user)
+            ->postJson(route('api.game.join', ['code' => $game->code]));
+
+        $response = $this
+            ->actingAs($user)
+            ->postJson(route('api.game.join', ['code' => $game->code]))
+            ->assertBadRequest();
     }
 
     /**

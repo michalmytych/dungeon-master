@@ -12,7 +12,9 @@ class CharacterFactory extends Factory
     public function definition(): array
     {
         return [
-            'name' => $this->faker->name()
+            'name' => $this->faker->name(),
+            'game_id' => null,
+            'user_id' => null,
         ];
     }
 }

@@ -14,6 +14,14 @@ return new class extends Migration
         Schema::create('characters', function (Blueprint $table) {
             $table->id();
             $table->string('name');
+            $table
+                ->foreignId('game_id')
+                ->constrained('games')
+                ->cascadeOnDelete();
+            $table
+                ->foreignId('user_id')
+                ->constrained('users')
+                ->cascadeOnDelete();
             $table->timestamps();
         });
     }

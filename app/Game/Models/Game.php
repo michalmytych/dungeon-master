@@ -11,6 +11,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
  * @property string $name
  * @property string $code
  * @property mixed $master_id
+ * @method static firstWhere(string[] $array)
  */
 class Game extends Model
 {

@@ -2,6 +2,8 @@
 
 namespace App\User\Models;
 
+use App\Character\Models\Character;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Laravel\Sanctum\HasApiTokens;
 use Database\Factories\UserFactory;
 use Illuminate\Notifications\Notifiable;
@@ -10,6 +12,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 
 /**
  * @property mixed $id
+ * @property string $name
  */
 class User extends Authenticatable
 {
@@ -30,6 +33,11 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
     ];
+
+    public function characters(): HasMany
+    {
+        return $this->hasMany(Character::class);
+    }
 
     protected static function newFactory(): UserFactory
     {
