@@ -1,5 +1,6 @@
 <?php
 
+use App\Game\Http\Api\Controllers\GameController;
 use Illuminate\Support\Facades\Route;
 use App\User\Http\Api\Controllers\UserController;
 
@@ -15,13 +16,21 @@ use App\User\Http\Api\Controllers\UserController;
 */
 
 Route::group(['as' => 'api.'], function () {
-    Route::group(['prefix' => 'users', 'as' => 'user.'], function() {
+
+    Route::group(['prefix' => 'users', 'as' => 'user.'], function () {
         Route::post('/login', [UserController::class, 'login'])->name('login');
         Route::post('/register', [UserController::class, 'register'])->name('register');
+    });
 
-        Route::group(['middleware' => ['auth:sanctum']], function () {
+
+    Route::group(['middleware' => ['auth:sanctum']], function () {
+        Route::group(['prefix' => 'users', 'as' => 'user.'], function () {
             Route::post('/logout', [UserController::class, 'logout'])->name('logout');
             Route::get('/user', [UserController::class, 'user'])->name('user');
+        });
+
+        Route::group(['prefix' => 'games', 'as' => 'game.'], function () {
+            Route::post('/', [GameController::class, 'create'])->name('create');
         });
     });
 });
