@@ -2,14 +2,13 @@
 
 namespace App\Game\Http\Api\Controllers;
 
-use App\Game\Exceptions\GameNotFoundException;
-use App\Game\Exceptions\UserAlreadyJoinedGameException;
-use App\Game\Http\Api\Requests\JoinRequest;
 use Exception;
 use Illuminate\Http\JsonResponse;
 use App\Game\Services\GameService;
 use App\Common\Http\Controllers\Controller;
+use App\Game\Http\Api\Requests\JoinRequest;
 use App\Game\Http\Api\Requests\CreateRequest;
+use App\Common\Exceptions\DungeonMasterException;
 
 class GameController extends Controller
 {
@@ -25,15 +24,10 @@ class GameController extends Controller
                 $createRequest->user()
             );
 
-        } catch (GameNotFoundException $exception) {
+        } catch (DungeonMasterException $exception) {
             return response()->json([
                 'error' => $exception->getMessage()
-            ], 404);
-
-        } catch (UserAlreadyJoinedGameException $exception) {
-            return response()->json([
-                'error' => $exception->getMessage()
-            ], 400);
+            ], $exception->getHttpErrorStatusCode());
         }
 
         return response()->json([

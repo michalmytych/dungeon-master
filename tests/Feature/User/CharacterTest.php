@@ -2,9 +2,10 @@
 
 namespace Tests\Feature\User;
 
-use App\Character\Models\Character;
 use Tests\TestCase;
 use App\User\Models\User;
+use App\Game\Models\Game;
+use App\Character\Models\Character;
 use Illuminate\Testing\Fluent\AssertableJson;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
@@ -14,11 +15,17 @@ class CharacterTest extends TestCase
 
     public function test_show_character(): void
     {
-        /** @var Character $character */
-        $character = Character::factory()->create();
-
         /** @var User $user */
         $user = User::factory()->create();
+
+        /** @var Game $game */
+        $game = Game::factory()->create();
+
+        /** @var Character $character */
+        $character = Character::factory()->create([
+            'game_id' => $game->id,
+            'user_id' => $user->id
+        ]);
 
         $this
             ->actingAs($user)
@@ -29,9 +36,13 @@ class CharacterTest extends TestCase
                     ->has('data', fn (AssertableJson $json) => $json
                         ->where('id', $character->id)
                         ->where('name', $character->name)
+                        ->where('game_id', $game->id)
+                        ->where('user_id', $user->id)
                         ->whereAllType([
                             'id' => 'integer',
                             'name' => 'string',
+                            'game_id' => 'integer',
+                            'user_id' => 'integer',
                             'updated_at' => 'string',
                             'created_at' => 'string'
                         ])

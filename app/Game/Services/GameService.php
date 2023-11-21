@@ -4,6 +4,7 @@ namespace App\Game\Services;
 
 use App\Character\Models\Character;
 use App\Game\Events\UserJoinedGame;
+use App\Game\Exceptions\GameMasterCannotJoinGameAsPlayerException;
 use App\Game\Exceptions\UserAlreadyJoinedGameException;
 use Exception;
 use App\User\Models\User;
@@ -16,6 +17,7 @@ class GameService
     /**
      * @throws GameNotFoundException
      * @throws UserAlreadyJoinedGameException
+     * @throws GameMasterCannotJoinGameAsPlayerException
      */
     public function join(string $code, User $user): Character
     {
@@ -34,6 +36,10 @@ class GameService
 
         if ($characterForGameAndUserExists) {
             throw new UserAlreadyJoinedGameException();
+        }
+
+        if ($game->master_id === $user->id) {
+            throw new GameMasterCannotJoinGameAsPlayerException();
         }
 
         $character = Character::create([

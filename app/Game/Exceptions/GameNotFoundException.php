@@ -2,9 +2,14 @@
 
 namespace App\Game\Exceptions;
 
-use Exception;
+use App\Common\Exceptions\DungeonMasterException;
 
-class GameNotFoundException extends Exception
+class GameNotFoundException extends DungeonMasterException
 {
     protected $message = 'Game was not found by provided data.';
+
+    public function getHttpErrorStatusCode(): int
+    {
+        return 404;
+    }
 }

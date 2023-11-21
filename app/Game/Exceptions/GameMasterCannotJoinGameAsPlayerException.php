@@ -4,9 +4,9 @@ namespace App\Game\Exceptions;
 
 use App\Common\Exceptions\DungeonMasterException;
 
-class UserAlreadyJoinedGameException extends DungeonMasterException
+class GameMasterCannotJoinGameAsPlayerException extends DungeonMasterException
 {
-    protected $message = 'This user already joined this game.';
+    protected $message = 'Game master cannot join game as player and create character.';
 
     public function getHttpErrorStatusCode(): int
     {

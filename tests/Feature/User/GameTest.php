@@ -2,12 +2,12 @@
 
 namespace Tests\Feature\User;
 
-use App\Character\Models\Character;
-use App\Game\Events\UserJoinedGame;
-use Illuminate\Support\Facades\Event;
 use Tests\TestCase;
 use App\User\Models\User;
 use App\Game\Models\Game;
+use App\Character\Models\Character;
+use App\Game\Events\UserJoinedGame;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Testing\Fluent\AssertableJson;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -60,10 +60,15 @@ class GameTest extends TestCase
         $eventFake = Event::fake();
 
         /** @var User $user */
+        $master = User::factory()->create();
+
+        /** @var User $user */
         $user = User::factory()->create();
 
         /** @var Game $game */
-        $game = Game::factory()->create();
+        $game = Game::factory()->create([
+            'master_id' => $master->id
+        ]);
 
         $response = $this
             ->actingAs($user)
@@ -79,6 +84,23 @@ class GameTest extends TestCase
 
         $this->assertEquals($game->id, $character->game_id);
         $this->assertEquals($user->id, $character->user_id);
+    }
+
+    public function test_game_master_cannot_join_game(): void
+    {
+        /** @var User $user */
+        $user = User::factory()->create();
+
+        /** @var Game $game */
+        $game = Game::factory()->create([
+            'master_id' => $user->id
+        ]);
+
+        $response = $this
+            ->actingAs($user)
+            ->postJson(route('api.game.join', ['code' => $game->code]));
+
+        $response->assertBadRequest();
     }
 
     public function test_user_cannot_join_game_with_bad_code(): void
